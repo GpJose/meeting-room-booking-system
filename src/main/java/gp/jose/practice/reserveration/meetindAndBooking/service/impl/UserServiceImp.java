@@ -2,7 +2,7 @@ package gp.jose.practice.reserveration.meetindAndBooking.service.impl;
 
 import gp.jose.practice.reserveration.meetindAndBooking.factory.UserFactory;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
-import gp.jose.practice.reserveration.meetindAndBooking.repository.UserRepositoryInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.repository.user.UserRepositoryInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.UserServiceInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.utils.CryptUtil;
 
@@ -13,8 +13,6 @@ public class UserServiceImp <U extends UserInterface> implements UserServiceInte
     private final UserRepositoryInterface<U> userRepositoryInterface;
     private final UserFactory<U> userFactory;
 
-    private U user;
-
     public UserServiceImp(UserRepositoryInterface<U> userRepositoryInterface,
                           UserFactory<U> userFactory) {
         this.userRepositoryInterface = userRepositoryInterface;
@@ -22,43 +20,37 @@ public class UserServiceImp <U extends UserInterface> implements UserServiceInte
     }
 
     @Override
-    public boolean auth(String login, String password) {
+    public Optional<U> auth(String login, String password) {
 
-        Optional<U> foundUser = userRepositoryInterface.findAll().stream()
-                .filter(u -> u.getUserLogin().equalsIgnoreCase(login))
-                .filter(u -> CryptUtil.checkHash(password, u.getPassword()))
+        return userRepositoryInterface
+                .findAll()
+                .stream()
+                .filter(u -> u.login().equalsIgnoreCase(login))
+                .filter(u -> CryptUtil.checkHash(password, u.password()))
                 .findFirst();
-
-        foundUser.ifPresent(u -> this.user = u);
-
-        return foundUser.isPresent();
     }
 
     @Override
-    public boolean create(String fio, String login, String password) {
+    public void create(String fio, String login, String password) {
 
         boolean exists = userRepositoryInterface.findAll().stream()
-                .anyMatch(u -> u.getUserLogin().equalsIgnoreCase(login));
+                .anyMatch(u -> u.login().equalsIgnoreCase(login));
 
         if (exists) {
             System.out.println("Пользователь с таким логином уже существует");
-            return false;
+            return;
         }
 
         U newUser = userFactory.create(fio, login, CryptUtil.hash(password));
 
-        boolean isCreated = userRepositoryInterface.create(newUser);
-        if (isCreated) {
+        try {
+
+            userRepositoryInterface.save(newUser);
             System.out.printf("Пользователь с логином %s создан%n", login);
-        } else {
+
+        } catch (Exception e) {
             System.out.printf("Ошибка: не удалось создать пользователя с логином %s%n", login);
+            throw e;
         }
-
-        return isCreated;
-    }
-
-    @Override
-    public U getUser() {
-        return this.user;
     }
 }

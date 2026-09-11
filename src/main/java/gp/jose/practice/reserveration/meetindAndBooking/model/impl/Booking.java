@@ -1,9 +1,9 @@
 package gp.jose.practice.reserveration.meetindAndBooking.model.impl;
 
 import gp.jose.practice.reserveration.meetindAndBooking.model.BookingInterface;
-import gp.jose.practice.reserveration.meetindAndBooking.model.enums.BookingStatus;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.model.enums.BookingStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,21 +16,21 @@ import java.util.TreeSet;
 @Builder
 public class Booking extends TreeSet<Booking> implements BookingInterface {
 
-    protected Long reserveId;
-    protected LocalTime startTime;
-    protected LocalTime endTime;
-    protected LocalDate date;
-    protected RoomInterface room;
-    protected UserInterface user;
-    protected BookingStatus status;
+    private Long reserveId;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private LocalDate date;
+    private RoomInterface room;
+    private UserInterface user;
+    private BookingStatus status;
 
     @Override
     public String reservedBy() {
-        return user.getFIO();
+        return user.FIO();
     }
 
     @Override
     public String reservedRoom() {
-        return room.getRoomName();
+        return room.roomName();
     }
 }

@@ -3,6 +3,7 @@ package gp.jose.practice.reserveration.meetindAndBooking.utils;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class CryptUtil {
+
     private static final String salt = BCrypt.gensalt(5);
 
     public static String hash(String password) {

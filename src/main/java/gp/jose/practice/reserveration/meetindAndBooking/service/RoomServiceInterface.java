@@ -1,11 +1,15 @@
 package gp.jose.practice.reserveration.meetindAndBooking.service;
 
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
 
-public interface RoomServiceInterface <T extends  RoomInterface> {
-    T getRoom();
-    T findByRoomId(Long id);
-    T findByRoomName(String name);
-    T findByCapacityRange(Integer min, Integer max);
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
+public interface RoomServiceInterface <R extends  RoomInterface> {
+    TreeSet<R> findAll();
+    void findByRoomName(String name);
+    void findByCapacityRange(Integer min, Integer max);
+    void findByEquipments(Set<Equipment> equipments);
 }

@@ -2,8 +2,9 @@ package gp.jose.practice.reserveration.meetindAndBooking.service;
 
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
 
+import java.util.Optional;
+
 public interface UserServiceInterface <U extends UserInterface> {
-    boolean auth(String login, String password);
-    boolean create(String fio, String login, String password);
-    U getUser();
+    Optional<U> auth(String login, String password);
+    void create(String fio, String login, String password);
 }

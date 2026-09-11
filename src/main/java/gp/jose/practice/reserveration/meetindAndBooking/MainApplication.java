@@ -1,35 +1,50 @@
 package gp.jose.practice.reserveration.meetindAndBooking;
 
-import gp.jose.practice.reserveration.meetindAndBooking.factory.UserFactoryImpl;
-import gp.jose.practice.reserveration.meetindAndBooking.model.impl.User;
+import gp.jose.practice.reserveration.meetindAndBooking.factory.impl.DefaultRoomFactoryImpl;
+import gp.jose.practice.reserveration.meetindAndBooking.factory.impl.DefaultUserFactoryImpl;
+import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.model.enums.ActionsEnum;
 import gp.jose.practice.reserveration.meetindAndBooking.service.impl.ControlService;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MainApplication {
 
     public static void main(String[] args) {
 
-        actions(new ControlService<>(new UserFactoryImpl()));
+        DefaultUserFactoryImpl userFactory = new DefaultUserFactoryImpl();
+        DefaultRoomFactoryImpl roomFactory = new DefaultRoomFactoryImpl();
+
+        actions(new ControlService<>(userFactory, roomFactory));
 
     }
 
-    private static void actions(final ControlService<User> controlService ) {
+    private static void actions(
+            final ControlService<? extends UserInterface, ? extends RoomInterface> controlService) {
 
-        Integer input = 10;
         Scanner scanner = new Scanner(System.in);
 
-        do {
+        while (true) {
 
             try {
-                controlService.printMenu();
-                input = scanner.nextInt();
-                controlService.action(input, scanner);
-            } catch (InputMismatchException inputMismatchException) {
-                System.out.println("Ввод некорректен");
-            }
 
-        } while (input != 10);
+                controlService.printMenu();
+
+                String inputLine = scanner.nextLine().trim();
+
+                if (ActionsEnum.CLOSE_APP.getCode().toString().equals(inputLine)) {
+                    System.out.println("App closing...");
+                    break;
+                }
+
+                ActionsEnum.getEnum(Integer.parseInt(inputLine))
+                        .ifPresentOrElse(actionsEnum -> controlService.action(actionsEnum, scanner),
+                                () -> System.out.println("В меню нет этого пункта"));
+
+            } catch (NumberFormatException e) {
+                System.out.println("Ввдеите корректное число");
+            }
+        }
     }
 }

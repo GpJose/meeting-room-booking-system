@@ -1,8 +1,9 @@
 package gp.jose.practice.reserveration.meetindAndBooking.model;
 
+import gp.jose.practice.reserveration.meetindAndBooking.model.impl.User;
+
 public interface UserInterface {
-    Long getUserId();
+    String getUserLogin();
     String getFIO();
-    boolean equals(String login, String password);
-    String getLogin(String login);
+    String getPassword();
 }

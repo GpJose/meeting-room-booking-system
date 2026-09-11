@@ -1,31 +1,26 @@
 package gp.jose.practice.reserveration.meetindAndBooking.model.impl;
 
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.utils.CryptUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
 public class User implements UserInterface {
+    private final String FIO;
+    private final String login;
 
-    private Long id;
-    private String FIO;
-    private String login;
-    private String password;
+    private final String password;
 
-    @Override
-    public Long getUserId() {
-        return this.id;
+    public User(String fio, String login, String password) {
+        this.FIO = fio;
+        this.login = login;
+        this.password = password;
     }
 
     @Override
-    public boolean equals(String login, String password) {
-        return this.login.equalsIgnoreCase(login) && this.password.equals(password);
-    }
-
-    @Override
-    public String getLogin(String login) {
+    public String getUserLogin() {
         return this.login;
     }
-
 }

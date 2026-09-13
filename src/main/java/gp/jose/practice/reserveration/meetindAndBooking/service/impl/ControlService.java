@@ -7,7 +7,10 @@ import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.ActionsEnum;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.room.RoomsRepository;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.user.UsersRepository;
+import gp.jose.practice.reserveration.meetindAndBooking.service.BookingServiceInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.ControlInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.service.RoomServiceInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.service.UserServiceInterface;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -16,14 +19,18 @@ import static gp.jose.practice.reserveration.meetindAndBooking.utils.InputUtil.*
 
 public class ControlService <U extends UserInterface, R extends RoomInterface> implements ControlInterface {
 
-    private final UserServiceImp<U> userService;
-    private final RoomServiceImpl<R> roomService;
+    private final UserServiceInterface<U> userService;
+    private final RoomServiceInterface<R> roomService;
+    private final BookingServiceInterface bookingService;
     private U user;
     private boolean isAuthorized;
 
-    public ControlService(UserFactory<U> userFactory, RoomFactory<R> roomFactory) {
+    public ControlService(UserFactory<U> userFactory,
+                          RoomFactory<R> roomFactory,
+                          BookingServiceInterface bookingService) {
         this.userService = new UserServiceImp<>(new UsersRepository<>(), userFactory);
         this.roomService = new RoomServiceImpl<>(new RoomsRepository<>(roomFactory));
+        this.bookingService = bookingService;
         this.isAuthorized = false;
         this.user = null;
     }
@@ -61,10 +68,16 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
             case CREATE_USER -> create(enterFio(in), enterLogin(in), enterPassword(in));
 
             case CREATE_BOOKING -> {
+
             }
             case CANCEL_BOOKING -> {
+
             }
             case FIND_BOOKING_BY_ROOM -> {
+
+            }
+            case FIND_BOOKING_BY_DATE -> {
+
             }
             case FIND_ROOM_BY_NAME -> roomService.findByRoomName(enterRoomName(in));
             case FIND_ROOM_BY_CAPACITY -> {

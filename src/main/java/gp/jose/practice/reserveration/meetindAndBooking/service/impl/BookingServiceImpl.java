@@ -1,25 +1,31 @@
 package gp.jose.practice.reserveration.meetindAndBooking.service.impl;
 
-import gp.jose.practice.reserveration.meetindAndBooking.model.impl.Booking;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.model.impl.Booking;
+import gp.jose.practice.reserveration.meetindAndBooking.repository.booking.BookingRepositoryInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.BookingServiceInterface;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayDeque;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Objects;
 import java.util.TreeSet;
 
 @Getter
-public class BookingServiceImpl <R extends  RoomInterface> implements BookingServiceInterface<R> {
+public class BookingServiceImpl implements BookingServiceInterface {
 
-    private final HashMap<R, TreeSet<Booking>> upcomingMeetings = new HashMap<>();
-    private final HashMap<R, ArrayDeque<Booking>> completedMeetings = new HashMap<>();
+    private final BookingRepositoryInterface bookingRepository;
 
-    public boolean createMeeting(R room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
+    public BookingServiceImpl(BookingRepositoryInterface bookingRepository) {
+
+        Objects.requireNonNull(bookingRepository);
+
+        this.bookingRepository = bookingRepository;
+    }
+
+    public boolean createMeeting(RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
 
         if (isFree(room, toDate, starTime, endTime)) {
 
@@ -39,7 +45,22 @@ public class BookingServiceImpl <R extends  RoomInterface> implements BookingSer
     }
 
     @Override
-    public boolean isFree(R room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
+    public boolean createMeeting(RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
+        return false;
+    }
+
+    @Override
+    public void findBookingByDate() {
+
+    }
+
+    @Override
+    public void findBookingByRoom() {
+
+    }
+
+    @Override
+    public boolean isFree(RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
 
         TreeSet<Booking> bookings = upcomingMeetings.get(room);
 
@@ -53,10 +74,11 @@ public class BookingServiceImpl <R extends  RoomInterface> implements BookingSer
         return startTime.isBefore(booking.getEndTime()) || endTime.isAfter(booking.getStartTime());
     }
 
-    private void addMeeting(R room, LocalDate toDate, LocalTime starTime, LocalTime endTime, Long userId) {
+    @Override
+    private void createMeeting(R room, LocalDate toDate, LocalTime starTime, LocalTime endTime, Long userId) {
 
         upcomingMeetings.computeIfAbsent(room, k -> new TreeSet<>(
-                Comparator.comparing(Booking::getStartTime)
+                Comparator.comparing(Booking::getStartDateTime)
         )).add(Booking
                 .builder()
                 .build());

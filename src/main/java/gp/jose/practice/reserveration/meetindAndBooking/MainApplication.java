@@ -5,6 +5,8 @@ import gp.jose.practice.reserveration.meetindAndBooking.factory.impl.DefaultUser
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.ActionsEnum;
+import gp.jose.practice.reserveration.meetindAndBooking.repository.booking.BookingRepository;
+import gp.jose.practice.reserveration.meetindAndBooking.service.impl.BookingServiceImpl;
 import gp.jose.practice.reserveration.meetindAndBooking.service.impl.ControlService;
 
 import java.util.Scanner;
@@ -13,10 +15,11 @@ public class MainApplication {
 
     public static void main(String[] args) {
 
+        // TODO переделать фабрику
         DefaultUserFactoryImpl userFactory = new DefaultUserFactoryImpl();
         DefaultRoomFactoryImpl roomFactory = new DefaultRoomFactoryImpl();
 
-        actions(new ControlService<>(userFactory, roomFactory));
+        actions(new ControlService<>(userFactory, roomFactory, new BookingServiceImpl(new BookingRepository())));
 
     }
 

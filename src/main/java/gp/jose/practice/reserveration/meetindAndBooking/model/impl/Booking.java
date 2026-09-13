@@ -7,19 +7,16 @@ import gp.jose.practice.reserveration.meetindAndBooking.model.enums.BookingStatu
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.TreeSet;
+import java.time.LocalDateTime;
 
-// комната, кто бронирует, дата, время начала и окончания.
+
 @Getter
 @Builder
-public class Booking extends TreeSet<Booking> implements BookingInterface {
+public class Booking implements BookingInterface {
 
     private Long reserveId;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private LocalDate date;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
     private RoomInterface room;
     private UserInterface user;
     private BookingStatus status;
@@ -30,7 +27,7 @@ public class Booking extends TreeSet<Booking> implements BookingInterface {
     }
 
     @Override
-    public String reservedRoom() {
+    public String getReserverRoomName() {
         return room.roomName();
     }
 }

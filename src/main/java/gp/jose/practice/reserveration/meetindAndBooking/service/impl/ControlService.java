@@ -24,7 +24,7 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
     private final RoomServiceInterface<R> roomService;
     private final BookingServiceInterface bookingService;
     private U user;
-    private final HashMap<String, R> rooms;
+    private final Map<String, R> rooms;
     private boolean isAuthorized;
 
     public ControlService(UserFactory<U> userFactory,

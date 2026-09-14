@@ -1,10 +1,12 @@
 package gp.jose.practice.reserveration.meetindAndBooking;
 
-import gp.jose.practice.reserveration.meetindAndBooking.factory.impl.DefaultRoomFactoryImpl;
-import gp.jose.practice.reserveration.meetindAndBooking.factory.impl.DefaultUserFactoryImpl;
+import gp.jose.practice.reserveration.meetindAndBooking.factory.RoomFactory;
+import gp.jose.practice.reserveration.meetindAndBooking.factory.UserFactory;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.ActionsEnum;
+import gp.jose.practice.reserveration.meetindAndBooking.model.impl.Room;
+import gp.jose.practice.reserveration.meetindAndBooking.model.impl.User;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.booking.BookingRepository;
 import gp.jose.practice.reserveration.meetindAndBooking.service.impl.BookingServiceImpl;
 import gp.jose.practice.reserveration.meetindAndBooking.service.impl.ControlService;
@@ -22,9 +24,8 @@ public class MainApplication {
 
         System.setOut(new java.io.PrintStream(System.out, true, StandardCharsets.UTF_8));
 
-        // TODO переделать фабрику
-        DefaultUserFactoryImpl userFactory = new DefaultUserFactoryImpl();
-        DefaultRoomFactoryImpl roomFactory = new DefaultRoomFactoryImpl();
+        UserFactory<User> userFactory = User::new;
+        RoomFactory<Room> roomFactory = Room::new;
 
         actions(new ControlService<>(userFactory, roomFactory, new BookingServiceImpl(new BookingRepository())));
 

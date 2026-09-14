@@ -17,8 +17,8 @@ public class RoomsRepository <R extends RoomInterface> implements RoomRepository
     private final HashMap<String, R> rooms = new HashMap<>();
 
     @Override
-    public HashMap<String, R> findAll() {
-        return this.rooms;
+    public Map<String, R> findAll() {
+        return new HashMap<>(this.rooms);
     }
 
     @Override

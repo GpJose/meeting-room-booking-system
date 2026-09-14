@@ -5,10 +5,7 @@ import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.room.RoomRepositoryInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.RoomServiceInterface;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -22,7 +19,7 @@ public class RoomServiceImpl <R extends RoomInterface> implements RoomServiceInt
     }
 
     @Override
-    public HashMap<String, R> findAll() {
+    public Map<String, R> findAll() {
         return roomRepositoryInterface.findAll();
     }
 

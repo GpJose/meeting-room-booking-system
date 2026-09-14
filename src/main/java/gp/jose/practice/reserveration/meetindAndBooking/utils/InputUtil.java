@@ -1,11 +1,13 @@
 package gp.jose.practice.reserveration.meetindAndBooking.utils;
 
 
+import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.Set;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -60,5 +62,40 @@ public class InputUtil {
         }
         return next;
     }
+    public static LocalDate enterDate(Scanner in) {
+        System.out.println("Введите дату в формате : ГГГГ-ММ-ДД");
+        String s = in.nextLine().trim();
+        try {
+            return LocalDate.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeParseException e) {
+            throw new InputMismatchException("Неправильный формат даты. Введите дату в формате ГГГГ-ММ-ДД");
+        }
+    }
 
+    public static Long enterBookingId(Scanner in) {
+        System.out.println("Введите Id встречи ");
+        String s = getDigitOnlyStr(in);
+        return Long.parseLong(s);
+    }
+    public static Integer enterCapacity(Scanner in) {
+        System.out.println("Введите минимум вместимость");
+        return Integer.parseInt(getDigitOnlyStr(in));
+    }
+
+    private static String getDigitOnlyStr(Scanner in) {
+        String s = in.nextLine().trim();
+        if(! s.matches("^\\d+$")) {
+            throw new InputMismatchException("ID состоит только из цифр");
+        }
+        return s;
+    }
+
+    private static void printEquipment() {
+        System.out.println(Arrays.toString(Equipment.values()));
+    }
+    public static String enterEquipment(Scanner in) {
+        printEquipment();
+        System.out.println("Введите Equipment через запятую");
+        return in.nextLine();
+    }
 }

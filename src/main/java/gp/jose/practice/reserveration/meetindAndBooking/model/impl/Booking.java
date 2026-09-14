@@ -6,12 +6,14 @@ import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.BookingStatus;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 
 @Getter
 @Builder
+@ToString
 public class Booking implements BookingInterface {
 
     private Long reserveId;
@@ -23,11 +25,16 @@ public class Booking implements BookingInterface {
 
     @Override
     public String reservedBy() {
-        return user.FIO();
+        return user.getLogin();
     }
 
     @Override
     public String getReserverRoomName() {
         return room.roomName();
+    }
+
+    @Override
+    public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 }

@@ -12,4 +12,5 @@ public interface BookingInterface {
     Long getReserveId();
     String getReserverRoomName();
     BookingStatus getStatus();
+    void setStatus(BookingStatus status);
 }

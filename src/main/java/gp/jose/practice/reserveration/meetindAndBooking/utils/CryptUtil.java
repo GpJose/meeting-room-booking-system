@@ -4,10 +4,8 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class CryptUtil {
 
-    private static final String salt = BCrypt.gensalt(5);
-
     public static String hash(String password) {
-        return BCrypt.hashpw(password, salt);
+        return BCrypt.hashpw(password, BCrypt.gensalt(5));
     }
     public static boolean checkHash(String password, String hashPassword) {
         return BCrypt.checkpw(password, hashPassword);

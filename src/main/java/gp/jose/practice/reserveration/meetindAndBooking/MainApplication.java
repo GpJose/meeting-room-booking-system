@@ -48,7 +48,7 @@ public class MainApplication {
 
                 String trim = scanner.nextLine().trim();
                 if(! trim.matches(actionPattern.pattern())) {
-                    throw new InputMismatchException();
+                    throw new InputMismatchException("Не правильно введены данные меню");
                 }
                 int inputLine = Integer.parseInt(trim);
                 if (ActionsEnum.CLOSE_APP.getCode().equals(inputLine)) {

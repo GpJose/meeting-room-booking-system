@@ -25,8 +25,8 @@ public class UserServiceImp <U extends UserInterface> implements UserServiceInte
         return userRepositoryInterface
                 .findAll()
                 .stream()
-                .filter(u -> u.login().equalsIgnoreCase(login))
-                .filter(u -> CryptUtil.checkHash(password, u.password()))
+                .filter(u -> u.getLogin().equalsIgnoreCase(login))
+                .filter(u -> CryptUtil.checkHash(password, u.getPassword()))
                 .findFirst();
     }
 
@@ -34,7 +34,7 @@ public class UserServiceImp <U extends UserInterface> implements UserServiceInte
     public void create(String fio, String login, String password) {
 
         boolean exists = userRepositoryInterface.findAll().stream()
-                .anyMatch(u -> u.login().equalsIgnoreCase(login));
+                .anyMatch(u -> u.getLogin().equalsIgnoreCase(login));
 
         if (exists) {
             System.out.println("Пользователь с таким логином уже существует");

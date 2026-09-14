@@ -5,17 +5,16 @@ import gp.jose.practice.reserveration.meetindAndBooking.factory.UserFactory;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.ActionsEnum;
+import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.room.RoomsRepository;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.user.UsersRepository;
 import gp.jose.practice.reserveration.meetindAndBooking.service.BookingServiceInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.ControlInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.RoomServiceInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.UserServiceInterface;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 import static gp.jose.practice.reserveration.meetindAndBooking.utils.InputUtil.*;
 
@@ -44,7 +43,7 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
         StringBuilder stringBuilder = new StringBuilder();
 
         if(isAuthorized(false)) stringBuilder.append("Вы авторизованы. Login : ")
-                .append(getUser().login()).append("\n");
+                .append(getUser().getLogin()).append("\n");
         else stringBuilder.append("Вы не авторизованы\n");
 
         stringBuilder.append(
@@ -66,8 +65,14 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
                 setUser(null);
                 System.out.println("Logout...");
             }
-            case AUTH -> auth(enterLogin(in), enterPassword(in))
-                    .ifPresent(this::setUser);
+            case AUTH -> {
+
+                if(this.user == null) {
+                    auth(enterLogin(in), enterPassword(in))
+                            .ifPresent(this::setUser);
+                } else System.out.println("Вы уже авторизованы");
+
+            }
 
             case CREATE_USER -> create(enterFio(in), enterLogin(in), enterPassword(in));
 
@@ -78,25 +83,28 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
                         enterLocalDate(in, false));
             }
             case CANCEL_BOOKING -> {
-
+                bookingService.cancelReserve(user, rooms.get(enterRoomName(in, getRoomNames())), enterBookingId(in));
             }
             case FIND_BOOKING_BY_ROOM -> {
-                bookingService.findBookingByRoom(rooms.get(enterRoomName(in, getRoomNames())));
+                bookingService.findBookingByRoom(rooms.get(enterRoomName(in, getRoomNames())), true);
             }
-            case FIND_BOOKING_BY_DATE -> {
 
-
-
-            }
             case FIND_ALL_EXPIRED_BOOKING_BY_ROOM -> {
 
-//                roomService.findByRoomName(enterRoomName(in, getRoomNames()));
+                bookingService.findExpiredByRoom(rooms.get(enterRoomName(in, getRoomNames())));
             }
+            case FIND_BOOKING_BY_DAY ->
+                    bookingService.findAllBookingByDay(enterDate(in));
 
             case FIND_ROOM_BY_EQUIPMENTS -> {
-
+                Set<Equipment> setByInput = Equipment.findSetByInput(enterEquipment(in));
+                if(setByInput.isEmpty()) {
+                    throw new InputMismatchException();
+                }
+                roomService.findByEquipments(setByInput);
             }
-            case FIND_ROOM_BY_CAPACITY -> {
+            case FIND_ROOM_BY_MIN_CAPACITY -> {
+                roomService.findByMinCapacity(enterCapacity(in));
             }
             default -> System.out.printf("Нет реализации для действия %s цифра %s \n", action, action.getCode());
 
@@ -113,7 +121,7 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
         setAuth(auth.isPresent());
 
         if(isAuthorized(false)) System.out.println("Авторизация успешна");
-        else System.out.println("Не верные данные");
+        else System.out.println("Неверные данные");
         return auth;
     }
 
@@ -142,6 +150,7 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
         }
         return this.isAuthorized;
     }
+    @NotNull
     private Set<String> getRoomNames() {
         return this.rooms.keySet();
     }

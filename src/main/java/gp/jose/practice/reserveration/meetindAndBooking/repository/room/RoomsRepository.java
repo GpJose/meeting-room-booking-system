@@ -4,10 +4,7 @@ import gp.jose.practice.reserveration.meetindAndBooking.factory.RoomFactory;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 public class RoomsRepository <R extends RoomInterface> implements RoomRepositoryInterface<R> {
@@ -49,5 +46,12 @@ public class RoomsRepository <R extends RoomInterface> implements RoomRepository
                 roomFactory.create("Premium Lounge", 4, Set.of(Equipment.TV_SCREEN, Equipment.PHONE)),
                 roomFactory.create("Congress Hall", 50, Set.of(Equipment.PROJECTOR, Equipment.SCREEN, Equipment.VIDEO_CONFERENCE, Equipment.PHONE, Equipment.WHITEBOARD))
         );
+    }
+
+    public List<R> findByMinCapacity(int minCapacity) {
+        return rooms.values().stream()
+                .filter(room -> room.capacity() >= minCapacity)
+                .sorted(java.util.Comparator.comparingInt(RoomInterface::capacity))
+                .toList();
     }
 }

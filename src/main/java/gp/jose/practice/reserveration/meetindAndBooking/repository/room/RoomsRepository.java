@@ -4,10 +4,13 @@ import gp.jose.practice.reserveration.meetindAndBooking.factory.RoomFactory;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 
-public final class RoomsRepository <R extends RoomInterface> implements RoomRepositoryInterface<R> {
+public class RoomsRepository <R extends RoomInterface> implements RoomRepositoryInterface<R> {
 
     public RoomsRepository(RoomFactory<R> roomFactory) {
         Objects.requireNonNull(roomFactory);
@@ -17,10 +20,8 @@ public final class RoomsRepository <R extends RoomInterface> implements RoomRepo
     private final HashMap<String, R> rooms = new HashMap<>();
 
     @Override
-    public TreeSet<R> findAll() {
-        TreeSet<R> rTreeSet = new TreeSet<>(Comparator.comparing(RoomInterface::roomName));
-        rTreeSet.addAll(rooms.values());
-        return rTreeSet;
+    public HashMap<String, R> findAll() {
+        return this.rooms;
     }
 
     @Override

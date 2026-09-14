@@ -1,16 +1,17 @@
 package gp.jose.practice.reserveration.meetindAndBooking.service.impl;
 
+import gp.jose.practice.reserveration.meetindAndBooking.model.BookingInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.RoomInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.model.UserInterface;
+import gp.jose.practice.reserveration.meetindAndBooking.model.enums.BookingStatus;
 import gp.jose.practice.reserveration.meetindAndBooking.model.impl.Booking;
 import gp.jose.practice.reserveration.meetindAndBooking.repository.booking.BookingRepositoryInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.BookingServiceInterface;
 import lombok.Getter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Comparator;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeSet;
 
 @Getter
@@ -18,25 +19,38 @@ public class BookingServiceImpl implements BookingServiceInterface {
 
     private final BookingRepositoryInterface bookingRepository;
 
+
     public BookingServiceImpl(BookingRepositoryInterface bookingRepository) {
 
-        Objects.requireNonNull(bookingRepository);
+        Objects.requireNonNull(bookingRepository,
+                "BookingRepositoryInterface cannot be null in BookingServiceImpl construct");
 
         this.bookingRepository = bookingRepository;
     }
 
-    public boolean createMeeting(RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
+    @Override
+    public boolean createMeeting(RoomInterface room, UserInterface user, LocalDateTime starTime, LocalDateTime endTime) {
 
-        if (isFree(room, toDate, starTime, endTime)) {
+        TreeSet<BookingInterface> bookingByRoom = findBookingByRoom(room);
+
+        if (bookingByRoom.isEmpty() || isFree(room, bookingByRoom, starTime, endTime)) {
+
+            bookingRepository.save(Booking
+                    .builder()
+                    .reserveId(bookingRepository.nextVal())
+                    .user(user)
+                    .room(room)
+                    .status(BookingStatus.CREATED)
+                    .startDateTime(starTime)
+                    .endDateTime(endTime)
+                    .build());
 
             return true;
         }
         return false;
     }
-
-    @Override
-    public Long reserve(UserInterface user, RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
-        return 0L;
+    private TreeSet<BookingInterface> findBookingByName(RoomInterface roomName) {
+        return bookingRepository.findAllUpcomingByRoom(roomName);
     }
 
     @Override
@@ -44,44 +58,44 @@ public class BookingServiceImpl implements BookingServiceInterface {
         return false;
     }
 
+
     @Override
-    public boolean createMeeting(RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
-        return false;
+    public Optional<BookingInterface> findBookingByDate(RoomInterface room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+        return findBookingByName(room).stream()
+                .filter(bookingInterface -> bookingInterface.getStartDateTime().isBefore(endDateTime)
+                        && bookingInterface.getEndDateTime().isAfter(startDateTime))
+                .findAny();
     }
 
     @Override
-    public void findBookingByDate() {
-
+    public TreeSet<BookingInterface> findBookingByRoom(RoomInterface room) {
+        TreeSet<BookingInterface> allByName = bookingRepository.findAllUpcomingByRoom(room);
+        if(allByName.isEmpty()) System.out.printf("Для комнаты %s нет запланированых встреч\n", room);
+//        else System.out.printf("Запланированые встречи комнаты %s \n%s "
+//                , room
+//                , allByName.stream()
+//                        .map(booking -> " * " + booking.toString())
+//                        .collect(Collectors.joining("\n")));
+        return allByName;
     }
 
     @Override
-    public void findBookingByRoom() {
+    public boolean isFree(RoomInterface roomName,
+                          TreeSet<BookingInterface> roomBookings,
+                          LocalDateTime starTime,
+                          LocalDateTime endTime) {
 
-    }
-
-    @Override
-    public boolean isFree(RoomInterface room, LocalDate toDate, LocalTime starTime, LocalTime endTime) {
-
-        TreeSet<Booking> bookings = upcomingMeetings.get(room);
-
-        return bookings
+        boolean isFree = roomBookings
                 .stream()
                 .noneMatch(booking -> isOverlapping(starTime, endTime, booking));
-
+        if(isFree) System.out.printf("Запись для комнаты %s с %s по %s свободна\n", roomName, starTime, endTime);
+        else System.out.printf("Запись для комнаты %s с %s по %s занята\n", roomName, starTime, endTime);
+        return isFree;
     }
 
-    private boolean isOverlapping(LocalTime startTime, LocalTime endTime, Booking booking) {
-        return startTime.isBefore(booking.getEndTime()) || endTime.isAfter(booking.getStartTime());
+    private boolean isOverlapping(LocalDateTime startTime, LocalDateTime endTime, BookingInterface booking) {
+        return startTime.isBefore(booking.getStartDateTime()) || endTime.isAfter(booking.getEndDateTime());
     }
 
-    @Override
-    private void createMeeting(R room, LocalDate toDate, LocalTime starTime, LocalTime endTime, Long userId) {
-
-        upcomingMeetings.computeIfAbsent(room, k -> new TreeSet<>(
-                Comparator.comparing(Booking::getStartDateTime)
-        )).add(Booking
-                .builder()
-                .build());
-
-    }
 }

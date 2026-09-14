@@ -12,8 +12,10 @@ import gp.jose.practice.reserveration.meetindAndBooking.service.ControlInterface
 import gp.jose.practice.reserveration.meetindAndBooking.service.RoomServiceInterface;
 import gp.jose.practice.reserveration.meetindAndBooking.service.UserServiceInterface;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 
 import static gp.jose.practice.reserveration.meetindAndBooking.utils.InputUtil.*;
 
@@ -23,6 +25,7 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
     private final RoomServiceInterface<R> roomService;
     private final BookingServiceInterface bookingService;
     private U user;
+    private final HashMap<String, R> rooms;
     private boolean isAuthorized;
 
     public ControlService(UserFactory<U> userFactory,
@@ -33,6 +36,7 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
         this.bookingService = bookingService;
         this.isAuthorized = false;
         this.user = null;
+        this.rooms = roomService.findAll();
     }
 
     public void printMenu() {
@@ -68,27 +72,39 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
             case CREATE_USER -> create(enterFio(in), enterLogin(in), enterPassword(in));
 
             case CREATE_BOOKING -> {
-
+                bookingService.createMeeting(rooms.get(enterRoomName(in, getRoomNames())),
+                        user,
+                        enterLocalDate(in, true),
+                        enterLocalDate(in, false));
             }
             case CANCEL_BOOKING -> {
 
             }
             case FIND_BOOKING_BY_ROOM -> {
-
+                bookingService.findBookingByRoom(rooms.get(enterRoomName(in, getRoomNames())));
             }
             case FIND_BOOKING_BY_DATE -> {
 
-            }
-            case FIND_ROOM_BY_NAME -> roomService.findByRoomName(enterRoomName(in));
-            case FIND_ROOM_BY_CAPACITY -> {
+
 
             }
+            case FIND_ALL_EXPIRED_BOOKING_BY_ROOM -> {
+
+//                roomService.findByRoomName(enterRoomName(in, getRoomNames()));
+            }
+
             case FIND_ROOM_BY_EQUIPMENTS -> {
 
             }
+            case FIND_ROOM_BY_CAPACITY -> {
+            }
             default -> System.out.printf("Нет реализации для действия %s цифра %s \n", action, action.getCode());
+
         }
+
+
     }
+
 
     private Optional<U> auth(String login, String password) {
         System.out.println("Попытка авторизоваться");
@@ -125,5 +141,8 @@ public class ControlService <U extends UserInterface, R extends RoomInterface> i
             System.out.println("Для данного дейситвия авторизуйтесь или зарегистрируйтесь и авторизуйтесь" );
         }
         return this.isAuthorized;
+    }
+    private Set<String> getRoomNames() {
+        return this.rooms.keySet();
     }
 }

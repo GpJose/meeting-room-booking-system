@@ -2,16 +2,15 @@ package gp.jose.practice.reserveration.meetindAndBooking.model;
 
 import gp.jose.practice.reserveration.meetindAndBooking.model.enums.BookingStatus;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 // комната, кто бронирует, дата, время начала и окончания.
 public interface BookingInterface {
-    LocalTime getStartTime();
-    LocalTime getEndTime();
-    LocalDate getDate();
+    LocalDateTime getStartDateTime();
+    LocalDateTime getEndDateTime();
     String reservedBy();
     Long getReserveId();
-    String reservedRoom();
+    String getReserverRoomName();
     BookingStatus getStatus();
+    void setStatus(BookingStatus status);
 }

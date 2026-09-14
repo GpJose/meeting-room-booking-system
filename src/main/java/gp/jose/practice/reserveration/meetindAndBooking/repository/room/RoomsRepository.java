@@ -7,7 +7,7 @@ import gp.jose.practice.reserveration.meetindAndBooking.model.enums.Equipment;
 import java.util.*;
 
 
-public final class RoomsRepository <R extends RoomInterface> implements RoomRepositoryInterface<R> {
+public class RoomsRepository <R extends RoomInterface> implements RoomRepositoryInterface<R> {
 
     public RoomsRepository(RoomFactory<R> roomFactory) {
         Objects.requireNonNull(roomFactory);
@@ -17,10 +17,8 @@ public final class RoomsRepository <R extends RoomInterface> implements RoomRepo
     private final HashMap<String, R> rooms = new HashMap<>();
 
     @Override
-    public TreeSet<R> findAll() {
-        TreeSet<R> rTreeSet = new TreeSet<>(Comparator.comparing(RoomInterface::roomName));
-        rTreeSet.addAll(rooms.values());
-        return rTreeSet;
+    public HashMap<String, R> findAll() {
+        return this.rooms;
     }
 
     @Override
@@ -48,5 +46,12 @@ public final class RoomsRepository <R extends RoomInterface> implements RoomRepo
                 roomFactory.create("Premium Lounge", 4, Set.of(Equipment.TV_SCREEN, Equipment.PHONE)),
                 roomFactory.create("Congress Hall", 50, Set.of(Equipment.PROJECTOR, Equipment.SCREEN, Equipment.VIDEO_CONFERENCE, Equipment.PHONE, Equipment.WHITEBOARD))
         );
+    }
+
+    public List<R> findByMinCapacity(int minCapacity) {
+        return rooms.values().stream()
+                .filter(room -> room.capacity() >= minCapacity)
+                .sorted(java.util.Comparator.comparingInt(RoomInterface::capacity))
+                .toList();
     }
 }

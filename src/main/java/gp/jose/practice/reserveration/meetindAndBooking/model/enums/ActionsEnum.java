@@ -17,9 +17,10 @@ public enum ActionsEnum {
     CREATE_BOOKING(3, "Создать встречу", true),
     FIND_BOOKING_BY_ROOM(4, "Найти встречи комнаты", false),
     CANCEL_BOOKING(5, "Отменить встречу", true),
-    FIND_ROOM_BY_NAME(6, "Найти комнату по имени", false),
+    FIND_ALL_EXPIRED_BOOKING_BY_ROOM(6, "Найти все завершенные встречи по комнате", false),
     FIND_ROOM_BY_EQUIPMENTS(7, "Найти комнаты по оборудованиям",false),
-    FIND_ROOM_BY_CAPACITY(8, "Найти комнаты по вместимости", false),
+    FIND_ROOM_BY_MIN_CAPACITY(8, "Найти комнаты по вместимости", false),
+    FIND_BOOKING_BY_DAY(9, "Найти встерчи на дату", false),
     CLOSE_APP(10, "Закрыть приложение", false);
     private final Integer code;
     private final String description;

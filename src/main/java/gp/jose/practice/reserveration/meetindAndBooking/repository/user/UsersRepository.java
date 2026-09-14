@@ -18,7 +18,7 @@ public final class UsersRepository <U extends UserInterface> implements UserRepo
 
     @Override
     public void save(U user) {
-        users.put(user.login(), user);
+        users.put(user.getLogin(), user);
     }
 
     @Override

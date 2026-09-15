@@ -25,5 +25,4 @@ public final class UsersRepository <U extends UserInterface> implements UserRepo
     public Optional<U> findById(String id) {
         return Optional.ofNullable(users.get(id));
     }
-
 }
